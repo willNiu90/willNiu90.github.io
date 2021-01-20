@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="笔记">
+<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:site_name" content="笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Will">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="笔记" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">笔记</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-decorator" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/20/decorator/" class="article-date">
+  <time class="dt-published" datetime="2021-01-20T07:12:24.189Z" itemprop="datePublished">2021-01-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/20/decorator/">JS装饰器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id=""><a href="#" class="headerlink" title=""></a></h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Model</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">bar</span>(<span class="params">...args</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;this is log&#x27;</span>,<span class="built_in">this</span>, ...args)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">wrap</span>(<span class="params">fun</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function">(<span class="params">model, key</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> &#123; prototype &#125; = model</span><br><span class="line">        <span class="keyword">let</span> descriptor = <span class="built_in">Object</span>.getOwnPropertyDescriptor(prototype, key)</span><br><span class="line">        <span class="keyword">return</span> fun(prototype, key, descriptor)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> log = <span class="function"><span class="keyword">function</span>(<span class="params">target, key, descriptor</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(target, key, &#123;</span><br><span class="line">        ...descriptor,</span><br><span class="line">        <span class="function"><span class="title">value</span>(<span class="params">...args</span>)</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;start&#x27;</span>)</span><br><span class="line">            <span class="keyword">return</span> descriptor.value.apply(<span class="built_in">this</span>, args)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line">log = wrap(log)</span><br><span class="line">log(Model, <span class="string">&#x27;bar&#x27;</span>)</span><br><span class="line"><span class="keyword">let</span> a = <span class="keyword">new</span> Model()</span><br><span class="line">a.bar()</span><br></pre></td></tr></table></figure>
+<p>参考: <a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903635168526343">Javascript装饰器的妙用</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/20/decorator/" data-id="ckk53kb150000l4mdhwxqdt9m" data-title="JS装饰器" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-babel" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/05/babel/" class="article-date">
+  <time class="dt-published" datetime="2021-01-05T02:51:09.000Z" itemprop="datePublished">2021-01-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/05/babel/">v8垃圾回收</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="内存结构分配"><a href="#内存结构分配" class="headerlink" title="内存结构分配"></a>内存结构分配</h3><p>64位系统下大约1.4GB，32位系统下700MB。</p>
+<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><h4 id="标记清除"><a href="#标记清除" class="headerlink" title="标记清除"></a>标记清除</h4><ol>
+<li><p>垃圾收集器在运行的时候会给储存在内存中的所有变量都加上标记</p>
+</li>
+<li><p>去掉运行环境中的变量已经被环境中变量所引用变量的标记</p>
+</li>
+<li><p>依然有标记的变量就被视为准备删除的变量，原因是在运行环境中已经无法访问到这些变量了</p>
+</li>
+<li><p>垃圾收集器完成内存清除工作，销毁那些带标记的值并回收它们所占用的内存空间</p>
+</li>
+</ol>
+<h4 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h4><p>不常用，会有循环引用的问题</p>
+<h3 id="V8垃圾回收策略"><a href="#V8垃圾回收策略" class="headerlink" title="V8垃圾回收策略"></a>V8垃圾回收策略</h3><p>将内存分为老生代和新生代。新生代存放存活时间短的对象，老生代存放存活时间长或常驻内存的对象。对象最开始被分配到新生代，如果新生代内存空间不够，直接分配到老生代，新生代对象满足条件可以移动到老生代中。</p>
+<h4 id="分代内存"><a href="#分代内存" class="headerlink" title="分代内存"></a>分代内存</h4><p>32位系统新生代内存为16MB，老生代700MB，64位新生代32MB，老生代1.4GB</p>
+<h4 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h4><p>新生代主要使用Scavenge进行管理（只复制活着的对象），主要实现是Cheney算法，将内存平均分为两块，使用空间叫From，空置空间叫To。新对象都被分配到From中，在空间快要占满的将活动对象复制到To空间，然后清空From的内存空间，此时，调换From空间和To空间，继续进行内存分配，当满足晋升条件时候，新生代对象会移动到老生代中。</p>
+<h4 id="晋升"><a href="#晋升" class="headerlink" title="晋升"></a>晋升</h4><p>1.如果一个对象是第二次经历从From空间复制到To空间，那么这个对象会被移动到老生代中。<br>2.当要从From空间复制一个对象到To空间时，如果To空间已经使用超过了25%，则对象会晋升到老对象中。</p>
+<h4 id="老生代"><a href="#老生代" class="headerlink" title="老生代"></a>老生代</h4><p>老生代主要采用Mark-Sweep（只清除死了的对象）和Mark-Compact算法，一个是标记清除，一个标记整理。两者不同的地方是，Mark-Sweep在垃圾回收后会生成碎片内存，而Mark-Compact在清除前进行一步整理，将活动对象向一侧移动，随后清空边界的另一侧内存，这样空闲的内存是连续的，但是速度会慢一些。V8主要使用Mark-Sweep，在空间不足以对从新生代中晋升过来的对象进行分配时，才使用Mark-Compact。</p>
+<p>参考<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903591510016007">聊聊V8引擎的垃圾回收</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MjM5OTA1MDUyMA==&mid=2655454776&idx=3&sn=5a56ad39695446cdbb80b7c6e428db0a&chksm=bd72ca4f8a054359314ad53b0c7c298e5ae0e76bafa91df6f27ed37a523a4c98f85785755f47&mpshare=1&scene=1&srcid=1012DCER3bPhdnBKC7NAM7KQ&sharer_sharetime=1602467639683&sharer_shareid=c72056f878ee34f54f1f762430611dc9&version=3.0.31.2998&platform=win&rd2werd=1#wechat_redirect">从 4 个面试题了解“浏览器的垃圾回收”</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/05/babel/" data-id="ckk53ds1v0000swmd6ihsamg2" data-title="v8垃圾回收" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/01/20/decorator/">JS装饰器</a>
+          </li>
+        
+          <li>
+            <a href="/2021/01/05/babel/">v8垃圾回收</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Will<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
