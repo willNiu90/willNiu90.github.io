@@ -71,6 +71,53 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-https" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/28/https/" class="article-date">
+  <time class="dt-published" datetime="2021-01-28T02:31:49.705Z" itemprop="datePublished">2021-01-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/01/28/https/">https加密</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="未加密的风险"><a href="#未加密的风险" class="headerlink" title="未加密的风险"></a>未加密的风险</h3><p>（1） 窃听风险：第三方可以获知通信内容。<br>（2） 篡改风险：第三方可以修改内容。<br>（3） 冒充风险：第三方可以冒充他人身份参与通信。</p>
+<h3 id="加密后的效果"><a href="#加密后的效果" class="headerlink" title="加密后的效果"></a>加密后的效果</h3><p>（1） 所有信息都是加密传播，第三方无法窃听。<br>（2） 具有校验机制，一旦被篡改，通信双方会立刻发现。<br>（3） 具备身份证书，防止身份被冒充。</p>
+<h3 id="加密解密过程"><a href="#加密解密过程" class="headerlink" title="加密解密过程"></a>加密解密过程</h3><p>（1）客户端：<br>    1.支持的协议版本，比如TLS 1.0版<br>    2.一个客户端生成的随机数，稍后用于生成”对话密钥”<br>    3.支持的加密方法，比如RSA公钥加密<br>    4.支持的压缩方法<br>（2）服务端：<br>    1.确认协议版本<br>    2.确认加密的算法<br>    3.随机数<br>    4.数字证书<br>（3）客户度：<br>    1.验证证书<br>      CA对证书明文信息进行hash<br>      对hash后的值用CA的私钥加密，得到数字签名<br>      浏览器拿到证书，得到明文T，数字签名S<br>      用CA的公钥对S解密，得到S’<br>      用证书里的hash算法对明文T进行hash得到T’<br>      对比S’和T’验证是否一致<br>    2.生成一个随机数，用服务器的公钥加密这个随机数发送给服务端<br>    3.根据三个随机数生成一个session secret<br>    4.用session secret加密”finish”信号<br>（4）服务端<br>    1.服务端用私钥解密得到第三个随机数，生成session secret<br>    2.用session secret加密”finish”信号</p>
+<h3 id="session的恢复"><a href="#session的恢复" class="headerlink" title="session的恢复"></a>session的恢复</h3><h4 id="session-ID"><a href="#session-ID" class="headerlink" title="session ID"></a>session ID</h4><p>每一个对话都一个session ID，如果对话中断，下次重连的时候，只要客户端给出这个编号，且服务器有这个编号的记录，双方就可以重新使用已有的”对话密钥”，而不必重新生成一把。session ID是目前所有浏览器都支持的方法，但是它的缺点在于session ID往往只保留在一台服务器上。所以，如果客户端的请求发到另一台服务器，就无法恢复对话。</p>
+<h4 id="session-ticket"><a href="#session-ticket" class="headerlink" title="session ticket"></a>session ticket</h4><p>客户端发送一个服务器在上一次对话中发送过来的session ticket。这个session ticket是加密的，只有服务器才能解密，其中包括本次对话的主要信息，比如对话密钥和加密方法。当服务器收到session ticket以后，解密后就不必重新生成对话密钥了。目前只有Firefox和Chrome浏览器支持。</p>
+<p>参考: <a target="_blank" rel="noopener" href="http://www.wxtlife.com/2016/03/27/%E8%AF%A6%E8%A7%A3https%E6%98%AF%E5%A6%82%E4%BD%95%E7%A1%AE%E4%BF%9D%E5%AE%89%E5%85%A8%E7%9A%84%EF%BC%9F/">详解https是如何确保安全的？</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/43789231">彻底搞懂HTTPS的加密机制</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html">图解SSL/TLS协议</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2014/02/ssl_tls.html">SSL/TLS协议运行机制的概述</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/28/https/" data-id="ckkg93v6b00009omd0fl47660" data-title="https加密" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-decorator" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/01/20/decorator/" class="article-date">
@@ -196,6 +243,10 @@
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/01/28/https/">https加密</a>
+          </li>
         
           <li>
             <a href="/2021/01/20/decorator/">JS装饰器</a>
