@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="内存结构分配64位系统下大约1.4GB，32位系统下700MB。 垃圾回收机制标记清除 垃圾收集器在运行的时候会给储存在内存中的所有变量都加上标记  去掉运行环境中的变量已经被环境中变量所引用变量的标记  依然有标记的变量就被视为准备删除的变量，原因是在运行环境中已经无法访问到这些变量了  垃圾收集器完成内存清除工作，销毁那些带标记的值并回收它们所占用的内存空间   引用计数不常用，会有循环引用的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="v8垃圾回收">
+<meta property="og:url" content="http://example.com/2021/01/05/v8/index.html">
+<meta property="og:site_name" content="我曾粉过杰伦@字节跳动">
+<meta property="og:description" content="内存结构分配64位系统下大约1.4GB，32位系统下700MB。 垃圾回收机制标记清除 垃圾收集器在运行的时候会给储存在内存中的所有变量都加上标记  去掉运行环境中的变量已经被环境中变量所引用变量的标记  依然有标记的变量就被视为准备删除的变量，原因是在运行环境中已经无法访问到这些变量了  垃圾收集器完成内存清除工作，销毁那些带标记的值并回收它们所占用的内存空间   引用计数不常用，会有循环引用的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-05T02:51:09.000Z">
+<meta property="article:modified_time" content="2021-06-24T03:43:18.458Z">
+<meta property="article:author" content="Will">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/01/05/v8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>v8垃圾回收 | 我曾粉过杰伦@字节跳动</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">我曾粉过杰伦@字节跳动</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/05/v8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Will">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我曾粉过杰伦@字节跳动">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          v8垃圾回收
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-05 10:51:09" itemprop="dateCreated datePublished" datetime="2021-01-05T10:51:09+08:00">2021-01-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-24 11:43:18" itemprop="dateModified" datetime="2021-06-24T11:43:18+08:00">2021-06-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="内存结构分配"><a href="#内存结构分配" class="headerlink" title="内存结构分配"></a>内存结构分配</h3><p>64位系统下大约1.4GB，32位系统下700MB。</p>
+<h3 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h3><h4 id="标记清除"><a href="#标记清除" class="headerlink" title="标记清除"></a>标记清除</h4><ol>
+<li><p>垃圾收集器在运行的时候会给储存在内存中的所有变量都加上标记</p>
+</li>
+<li><p>去掉运行环境中的变量已经被环境中变量所引用变量的标记</p>
+</li>
+<li><p>依然有标记的变量就被视为准备删除的变量，原因是在运行环境中已经无法访问到这些变量了</p>
+</li>
+<li><p>垃圾收集器完成内存清除工作，销毁那些带标记的值并回收它们所占用的内存空间</p>
+</li>
+</ol>
+<h4 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h4><p>不常用，会有循环引用的问题</p>
+<h3 id="V8垃圾回收策略"><a href="#V8垃圾回收策略" class="headerlink" title="V8垃圾回收策略"></a>V8垃圾回收策略</h3><p>将内存分为老生代和新生代。新生代存放存活时间短的对象，老生代存放存活时间长或常驻内存的对象。对象最开始被分配到新生代，如果新生代内存空间不够，直接分配到老生代，新生代对象满足条件可以移动到老生代中。</p>
+<h4 id="分代内存"><a href="#分代内存" class="headerlink" title="分代内存"></a>分代内存</h4><p>32位系统新生代内存为16MB，老生代700MB，64位新生代32MB，老生代1.4GB</p>
+<h4 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h4><p>新生代主要使用Scavenge进行管理（只复制活着的对象），主要实现是Cheney算法，将内存平均分为两块，使用空间叫From，空置空间叫To。新对象都被分配到From中，在空间快要占满的将活动对象复制到To空间，然后清空From的内存空间，此时，调换From空间和To空间，继续进行内存分配，当满足晋升条件时候，新生代对象会移动到老生代中。</p>
+<h4 id="晋升"><a href="#晋升" class="headerlink" title="晋升"></a>晋升</h4><p>1.如果一个对象是第二次经历从From空间复制到To空间，那么这个对象会被移动到老生代中。<br>2.当要从From空间复制一个对象到To空间时，如果To空间已经使用超过了25%，则对象会晋升到老对象中。</p>
+<h4 id="老生代"><a href="#老生代" class="headerlink" title="老生代"></a>老生代</h4><p>老生代主要采用Mark-Sweep（只清除死了的对象）和Mark-Compact算法，一个是标记清除，一个标记整理。两者不同的地方是，Mark-Sweep在垃圾回收后会生成碎片内存，而Mark-Compact在清除前进行一步整理，将活动对象向一侧移动，随后清空边界的另一侧内存，这样空闲的内存是连续的，但是速度会慢一些。V8主要使用Mark-Sweep，在空间不足以对从新生代中晋升过来的对象进行分配时，才使用Mark-Compact。</p>
+<p>参考<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903591510016007">聊聊V8引擎的垃圾回收</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MjM5OTA1MDUyMA==&mid=2655454776&idx=3&sn=5a56ad39695446cdbb80b7c6e428db0a&chksm=bd72ca4f8a054359314ad53b0c7c298e5ae0e76bafa91df6f27ed37a523a4c98f85785755f47&mpshare=1&scene=1&srcid=1012DCER3bPhdnBKC7NAM7KQ&sharer_sharetime=1602467639683&sharer_shareid=c72056f878ee34f54f1f762430611dc9&version=3.0.31.2998&platform=win&rd2werd=1#wechat_redirect">从 4 个面试题了解“浏览器的垃圾回收”</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/06/24/https/" rel="next" title="https加密">
+      https加密 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84%E5%88%86%E9%85%8D"><span class="nav-number">1.</span> <span class="nav-text">内存结构分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">垃圾回收机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4"><span class="nav-number">2.1.</span> <span class="nav-text">标记清除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">引用计数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V8%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5"><span class="nav-number">3.</span> <span class="nav-text">V8垃圾回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E4%BB%A3%E5%86%85%E5%AD%98"><span class="nav-number">3.1.</span> <span class="nav-text">分代内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3"><span class="nav-number">3.2.</span> <span class="nav-text">新生代</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%8B%E5%8D%87"><span class="nav-number">3.3.</span> <span class="nav-text">晋升</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%80%81%E7%94%9F%E4%BB%A3"><span class="nav-number">3.4.</span> <span class="nav-text">老生代</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Will</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Will</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
