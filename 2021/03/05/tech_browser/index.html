@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Chrome 的架构1.Browser Process（1）负责浏览器地址栏书签栏，前进后退等工作（2）网络请求与文件访问等包含的线程：1.UI 线程 2.网络线程 3.存储线程 2.Renderer Process负责一个 tab 内关于网页呈现的所有事情1.GUI 渲染线程（与 js 执行线程互斥）2.JS 引擎线程 3.事件触发线程 4.定时器线程 5.异步 HTTP 请求线程 3.Plug">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浏览器的基本工作原理">
+<meta property="og:url" content="http://example.com/2021/03/05/tech_browser/index.html">
+<meta property="og:site_name" content="我曾粉过杰伦@字节跳动">
+<meta property="og:description" content="Chrome 的架构1.Browser Process（1）负责浏览器地址栏书签栏，前进后退等工作（2）网络请求与文件访问等包含的线程：1.UI 线程 2.网络线程 3.存储线程 2.Renderer Process负责一个 tab 内关于网页呈现的所有事情1.GUI 渲染线程（与 js 执行线程互斥）2.JS 引擎线程 3.事件触发线程 4.定时器线程 5.异步 HTTP 请求线程 3.Plug">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-05T02:51:09.000Z">
+<meta property="article:modified_time" content="2021-06-24T06:25:17.382Z">
+<meta property="article:author" content="Will">
+<meta property="article:tag" content="technology">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/03/05/tech_browser/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>浏览器的基本工作原理 | 我曾粉过杰伦@字节跳动</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">我曾粉过杰伦@字节跳动</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/05/tech_browser/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Will">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="我曾粉过杰伦@字节跳动">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浏览器的基本工作原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-05 10:51:09" itemprop="dateCreated datePublished" datetime="2021-03-05T10:51:09+08:00">2021-03-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-24 14:25:17" itemprop="dateModified" datetime="2021-06-24T14:25:17+08:00">2021-06-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="Chrome-的架构"><a href="#Chrome-的架构" class="headerlink" title="Chrome 的架构"></a>Chrome 的架构</h3><p>1.Browser Process<br>（1）负责浏览器地址栏书签栏，前进后退等工作<br>（2）网络请求与文件访问等<br>包含的线程：1.UI 线程 2.网络线程 3.存储线程</p>
+<p>2.Renderer Process<br>负责一个 tab 内关于网页呈现的所有事情<br>1.GUI 渲染线程（与 js 执行线程互斥）<br>2.JS 引擎线程 3.事件触发线程 4.定时器线程 5.异步 HTTP 请求线程</p>
+<p>3.Plugin Process<br>(1).负责所有的插件，如 flash</p>
+<p>4.Gpu Process<br>（1）负责处理 GPU 相关的任务</p>
+<h3 id="加密后的效果"><a href="#加密后的效果" class="headerlink" title="加密后的效果"></a>加密后的效果</h3><p>（1） 所有信息都是加密传播，第三方无法窃听。<br>（2） 具有校验机制，一旦被篡改，通信双方会立刻发现。<br>（3） 具备身份证书，防止身份被冒充。</p>
+<h3 id="加密解密过程"><a href="#加密解密过程" class="headerlink" title="加密解密过程"></a>加密解密过程</h3><p>（1）客户端： 1.支持的协议版本，比如 TLS 1.0 版 2.一个客户端生成的随机数，稍后用于生成”对话密钥” 3.支持的加密方法，比如 RSA 公钥加密 4.支持的压缩方法<br>（2）服务端： 1.确认协议版本 2.确认加密的算法 3.随机数 4.数字证书<br>（3）客户度： 1.验证证书<br>CA 对证书明文信息进行 hash<br>对 hash 后的值用 CA 的私钥加密，得到数字签名<br>浏览器拿到证书，得到明文 T，数字签名 S<br>用 CA 的公钥对 S 解密，得到 S’<br>用证书里的 hash 算法对明文 T 进行 hash 得到 T’<br>对比 S’和 T’验证是否一致 2.生成一个随机数，用服务器的公钥加密这个随机数发送给服务端 3.根据三个随机数生成一个 session secret 4.用 session secret 加密”finish”信号<br>（4）服务端 1.服务端用私钥解密得到第三个随机数，生成 session secret 2.用 session secret 加密”finish”信号</p>
+<h3 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h3><h4 id="HTTP1-0"><a href="#HTTP1-0" class="headerlink" title="HTTP1.0"></a>HTTP1.0</h4><pre><code>1.每一个HTTP都要新建一个TCP连接
+2.对头阻塞，前一个响应头到达后下一个请求才能发送。</code></pre>
+<h4 id="HTTP1-1"><a href="#HTTP1-1" class="headerlink" title="HTTP1.1"></a>HTTP1.1</h4><pre><code>1.长连接：Connection设置为keep-alive，一个TCP可以发送多个HTTP请求
+2.管道化：可以不等第一个请求响应继续发送后面的请求，但响应的顺序还是按照请求的顺序返回
+3.缓存处理：新增cache-control
+4.端点传输</code></pre>
+<h4 id="HTTP2-0"><a href="#HTTP2-0" class="headerlink" title="HTTP2.0"></a>HTTP2.0</h4><pre><code>1.二进制分帧
+2.多路复用
+3.头部压缩
+4.服务器推送</code></pre>
+<p>参考: <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/47407398">图解浏览器的基本工作原理</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/technology/" rel="tag"># technology</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/05/tech_js_code/" rel="prev" title="手写js常用函数">
+      <i class="fa fa-chevron-left"></i> 手写js常用函数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/05/tech_https/" rel="next" title="https加密">
+      https加密 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chrome-%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">Chrome 的架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C"><span class="nav-number">2.</span> <span class="nav-text">加密后的效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">加密解密过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP"><span class="nav-number">4.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP1-0"><span class="nav-number">4.1.</span> <span class="nav-text">HTTP1.0</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP1-1"><span class="nav-number">4.2.</span> <span class="nav-text">HTTP1.1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP2-0"><span class="nav-number">4.3.</span> <span class="nav-text">HTTP2.0</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Will</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Will</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

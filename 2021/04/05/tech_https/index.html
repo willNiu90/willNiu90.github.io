@@ -20,19 +20,20 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Chrome的架构1.Browser Process    （1）负责浏览器地址栏书签栏，前进后退等工作    （2）网络请求与文件访问等        包含的线程：1.UI线程 2.网络线程 3.存储线程 2.Renderer Process    负责一个 tab 内关于网页呈现的所有事情    1.GUI渲染线程（与js执行线程互斥）    2.JS引擎线程    3.事件触发线程    4">
+  <meta name="description" content="未加密的风险（1） 窃听风险：第三方可以获知通信内容。（2） 篡改风险：第三方可以修改内容。（3） 冒充风险：第三方可以冒充他人身份参与通信。 加密后的效果（1） 所有信息都是加密传播，第三方无法窃听。（2） 具有校验机制，一旦被篡改，通信双方会立刻发现。（3） 具备身份证书，防止身份被冒充。 加密解密过程（1）客户端： 1.支持的协议版本，比如 TLS 1.0 版 2.一个客户端生成的随机数，稍">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浏览器的基本工作原理">
-<meta property="og:url" content="http://example.com/2021/06/24/browser/index.html">
+<meta property="og:title" content="https加密">
+<meta property="og:url" content="http://example.com/2021/04/05/tech_https/index.html">
 <meta property="og:site_name" content="我曾粉过杰伦@字节跳动">
-<meta property="og:description" content="Chrome的架构1.Browser Process    （1）负责浏览器地址栏书签栏，前进后退等工作    （2）网络请求与文件访问等        包含的线程：1.UI线程 2.网络线程 3.存储线程 2.Renderer Process    负责一个 tab 内关于网页呈现的所有事情    1.GUI渲染线程（与js执行线程互斥）    2.JS引擎线程    3.事件触发线程    4">
+<meta property="og:description" content="未加密的风险（1） 窃听风险：第三方可以获知通信内容。（2） 篡改风险：第三方可以修改内容。（3） 冒充风险：第三方可以冒充他人身份参与通信。 加密后的效果（1） 所有信息都是加密传播，第三方无法窃听。（2） 具有校验机制，一旦被篡改，通信双方会立刻发现。（3） 具备身份证书，防止身份被冒充。 加密解密过程（1）客户端： 1.支持的协议版本，比如 TLS 1.0 版 2.一个客户端生成的随机数，稍">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-06-24T03:29:23.458Z">
-<meta property="article:modified_time" content="2021-06-24T03:29:23.458Z">
+<meta property="article:published_time" content="2021-04-05T02:51:09.000Z">
+<meta property="article:modified_time" content="2021-06-24T06:24:58.948Z">
 <meta property="article:author" content="Will">
+<meta property="article:tag" content="technology">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2021/06/24/browser/">
+<link rel="canonical" href="http://example.com/2021/04/05/tech_https/">
 
 
 <script id="page-configurations">
@@ -45,7 +46,7 @@
   };
 </script>
 
-  <title>浏览器的基本工作原理 | 我曾粉过杰伦@字节跳动</title>
+  <title>https加密 | 我曾粉过杰伦@字节跳动</title>
   
 
 
@@ -117,6 +118,11 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
         <li class="menu-item menu-item-archives">
 
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
@@ -150,7 +156,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/24/browser/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/05/tech_https/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -163,7 +169,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          浏览器的基本工作原理
+          https加密
         </h1>
 
         <div class="post-meta">
@@ -173,8 +179,15 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-06-24 11:29:23" itemprop="dateCreated datePublished" datetime="2021-06-24T11:29:23+08:00">2021-06-24</time>
+              <time title="创建时间：2021-04-05 10:51:09" itemprop="dateCreated datePublished" datetime="2021-04-05T10:51:09+08:00">2021-04-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-24 14:24:58" itemprop="dateModified" datetime="2021-06-24T14:24:58+08:00">2021-06-24</time>
+              </span>
 
           
 
@@ -187,23 +200,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="Chrome的架构"><a href="#Chrome的架构" class="headerlink" title="Chrome的架构"></a>Chrome的架构</h3><p>1.Browser Process<br>    （1）负责浏览器地址栏书签栏，前进后退等工作<br>    （2）网络请求与文件访问等<br>        包含的线程：1.UI线程 2.网络线程 3.存储线程</p>
-<p>2.Renderer Process<br>    负责一个 tab 内关于网页呈现的所有事情<br>    1.GUI渲染线程（与js执行线程互斥）<br>    2.JS引擎线程<br>    3.事件触发线程<br>    4.定时器线程<br>    5.异步HTTP请求线程</p>
-<p>3.Plugin Process<br>     (1).负责所有的插件，如flash</p>
-<p>4.Gpu Process<br>    （1）负责处理GPU相关的任务</p>
+        <h3 id="未加密的风险"><a href="#未加密的风险" class="headerlink" title="未加密的风险"></a>未加密的风险</h3><p>（1） 窃听风险：第三方可以获知通信内容。<br>（2） 篡改风险：第三方可以修改内容。<br>（3） 冒充风险：第三方可以冒充他人身份参与通信。</p>
 <h3 id="加密后的效果"><a href="#加密后的效果" class="headerlink" title="加密后的效果"></a>加密后的效果</h3><p>（1） 所有信息都是加密传播，第三方无法窃听。<br>（2） 具有校验机制，一旦被篡改，通信双方会立刻发现。<br>（3） 具备身份证书，防止身份被冒充。</p>
-<h3 id="加密解密过程"><a href="#加密解密过程" class="headerlink" title="加密解密过程"></a>加密解密过程</h3><p>（1）客户端：<br>    1.支持的协议版本，比如TLS 1.0版<br>    2.一个客户端生成的随机数，稍后用于生成”对话密钥”<br>    3.支持的加密方法，比如RSA公钥加密<br>    4.支持的压缩方法<br>（2）服务端：<br>    1.确认协议版本<br>    2.确认加密的算法<br>    3.随机数<br>    4.数字证书<br>（3）客户度：<br>    1.验证证书<br>      CA对证书明文信息进行hash<br>      对hash后的值用CA的私钥加密，得到数字签名<br>      浏览器拿到证书，得到明文T，数字签名S<br>      用CA的公钥对S解密，得到S’<br>      用证书里的hash算法对明文T进行hash得到T’<br>      对比S’和T’验证是否一致<br>    2.生成一个随机数，用服务器的公钥加密这个随机数发送给服务端<br>    3.根据三个随机数生成一个session secret<br>    4.用session secret加密”finish”信号<br>（4）服务端<br>    1.服务端用私钥解密得到第三个随机数，生成session secret<br>    2.用session secret加密”finish”信号</p>
-<h3 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h3><h4 id="HTTP1-0"><a href="#HTTP1-0" class="headerlink" title="HTTP1.0"></a>HTTP1.0</h4><pre><code>1.每一个HTTP都要新建一个TCP连接
-2.对头阻塞，前一个响应头到达后下一个请求才能发送。</code></pre>
-<h4 id="HTTP1-1"><a href="#HTTP1-1" class="headerlink" title="HTTP1.1"></a>HTTP1.1</h4><pre><code>1.长连接：Connection设置为keep-alive，一个TCP可以发送多个HTTP请求
-2.管道化：可以不等第一个请求响应继续发送后面的请求，但响应的顺序还是按照请求的顺序返回
-3.缓存处理：新增cache-control
-4.端点传输</code></pre>
-<h4 id="HTTP2-0"><a href="#HTTP2-0" class="headerlink" title="HTTP2.0"></a>HTTP2.0</h4><pre><code>1.二进制分帧
-2.多路复用
-3.头部压缩
-4.服务器推送</code></pre>
-<p>参考: <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/47407398">图解浏览器的基本工作原理</a></p>
+<h3 id="加密解密过程"><a href="#加密解密过程" class="headerlink" title="加密解密过程"></a>加密解密过程</h3><p>（1）客户端： 1.支持的协议版本，比如 TLS 1.0 版 2.一个客户端生成的随机数，稍后用于生成”对话密钥” 3.支持的加密方法，比如 RSA 公钥加密 4.支持的压缩方法<br>（2）服务端： 1.确认协议版本 2.确认加密的算法 3.随机数 4.数字证书(证明公钥属于服务器)<br>（3）客户度： 1.验证证书<br>CA 对证书明文信息进行 hash<br>对 hash 后的值用 CA 的私钥加密，得到数字签名<br>浏览器拿到证书，得到明文 T，数字签名 S（数字签名：防止信息被篡改）<br>用 CA 的公钥对 S 解密，得到 S’<br>用证书里的 hash 算法对明文 T 进行 hash 得到 T’<br>对比 S’和 T’验证是否一致 2.生成一个随机数，用服务器的公钥加密这个随机数发送给服务端 3.根据三个随机数生成一个 session secret 4.用 session secret 加密”finish”信号<br>（4）服务端 1.服务端用私钥解密得到第三个随机数，生成 session secret 2.用 session secret 加密”finish”信号</p>
+<h3 id="session-的恢复"><a href="#session-的恢复" class="headerlink" title="session 的恢复"></a>session 的恢复</h3><h4 id="session-ID"><a href="#session-ID" class="headerlink" title="session ID"></a>session ID</h4><p>每一个对话都一个 session ID，如果对话中断，下次重连的时候，只要客户端给出这个编号，且服务器有这个编号的记录，双方就可以重新使用已有的”对话密钥”，而不必重新生成一把。session ID 是目前所有浏览器都支持的方法，但是它的缺点在于 session ID 往往只保留在一台服务器上。所以，如果客户端的请求发到另一台服务器，就无法恢复对话。</p>
+<h4 id="session-ticket"><a href="#session-ticket" class="headerlink" title="session ticket"></a>session ticket</h4><p>客户端发送一个服务器在上一次对话中发送过来的 session ticket。这个 session ticket 是加密的，只有服务器才能解密，其中包括本次对话的主要信息，比如对话密钥和加密方法。当服务器收到 session ticket 以后，解密后就不必重新生成对话密钥了。目前只有 Firefox 和 Chrome 浏览器支持。</p>
+<p>参考: <a target="_blank" rel="noopener" href="http://www.wxtlife.com/2016/03/27/%E8%AF%A6%E8%A7%A3https%E6%98%AF%E5%A6%82%E4%BD%95%E7%A1%AE%E4%BF%9D%E5%AE%89%E5%85%A8%E7%9A%84%EF%BC%9F/">详解 https 是如何确保安全的？</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/43789231">彻底搞懂 HTTPS 的加密机制</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html">图解 SSL/TLS 协议</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2014/02/ssl_tls.html">SSL/TLS 协议运行机制的概述</a></p>
 
     </div>
 
@@ -212,6 +217,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/technology/" rel="tag"># technology</a>
+          </div>
 
         
 
@@ -219,12 +227,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/06/24/https/" rel="prev" title="https加密">
-      <i class="fa fa-chevron-left"></i> https加密
+    <a href="/2021/03/05/tech_browser/" rel="prev" title="浏览器的基本工作原理">
+      <i class="fa fa-chevron-left"></i> 浏览器的基本工作原理
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/06/24/decorator/" rel="next" title="JS装饰器">
-      JS装饰器 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/06/24/inte_2019_tencent/" rel="next" title="2019年腾讯面试">
+      2019年腾讯面试 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -284,7 +292,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chrome%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">Chrome的架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C"><span class="nav-number">2.</span> <span class="nav-text">加密后的效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">加密解密过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP"><span class="nav-number">4.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP1-0"><span class="nav-number">4.1.</span> <span class="nav-text">HTTP1.0</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP1-1"><span class="nav-number">4.2.</span> <span class="nav-text">HTTP1.1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP2-0"><span class="nav-number">4.3.</span> <span class="nav-text">HTTP2.0</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AA%E5%8A%A0%E5%AF%86%E7%9A%84%E9%A3%8E%E9%99%A9"><span class="nav-number">1.</span> <span class="nav-text">未加密的风险</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C"><span class="nav-number">2.</span> <span class="nav-text">加密后的效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">加密解密过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session-%E7%9A%84%E6%81%A2%E5%A4%8D"><span class="nav-number">4.</span> <span class="nav-text">session 的恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#session-ID"><span class="nav-number">4.1.</span> <span class="nav-text">session ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#session-ticket"><span class="nav-number">4.2.</span> <span class="nav-text">session ticket</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -298,9 +306,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
       </div>
   </nav>
 </div>

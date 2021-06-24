@@ -20,19 +20,20 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="未加密的风险（1） 窃听风险：第三方可以获知通信内容。（2） 篡改风险：第三方可以修改内容。（3） 冒充风险：第三方可以冒充他人身份参与通信。 加密后的效果（1） 所有信息都是加密传播，第三方无法窃听。（2） 具有校验机制，一旦被篡改，通信双方会立刻发现。（3） 具备身份证书，防止身份被冒充。 加密解密过程（1）客户端：    1.支持的协议版本，比如TLS 1.0版    2.一个客户端生成的随">
+  <meta name="description" content="背景自己双非毕业不到一年，根本不敢去面试大厂，一直觉得是高不可攀的存在。后来是因为本科同学有两个考研去了 985，然后去腾讯实习了，我觉得大家本科一个学校的，他们能去大厂，我也可以。为了让自己的简历出色一些，能够投递进大厂，不自量力的写了熟悉基本的数据结构和算法，然后被面试官吊打。 腾讯第一次面试那是 2019 年的五月份，我当时还在上班，突然手机响起来了，显示的是腾讯来电，我既欣喜又慌张，欣喜的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="https加密">
-<meta property="og:url" content="http://example.com/2021/06/24/https/index.html">
+<meta property="og:title" content="2019年腾讯面试">
+<meta property="og:url" content="http://example.com/2021/06/24/inte_2019_tencent/index.html">
 <meta property="og:site_name" content="我曾粉过杰伦@字节跳动">
-<meta property="og:description" content="未加密的风险（1） 窃听风险：第三方可以获知通信内容。（2） 篡改风险：第三方可以修改内容。（3） 冒充风险：第三方可以冒充他人身份参与通信。 加密后的效果（1） 所有信息都是加密传播，第三方无法窃听。（2） 具有校验机制，一旦被篡改，通信双方会立刻发现。（3） 具备身份证书，防止身份被冒充。 加密解密过程（1）客户端：    1.支持的协议版本，比如TLS 1.0版    2.一个客户端生成的随">
+<meta property="og:description" content="背景自己双非毕业不到一年，根本不敢去面试大厂，一直觉得是高不可攀的存在。后来是因为本科同学有两个考研去了 985，然后去腾讯实习了，我觉得大家本科一个学校的，他们能去大厂，我也可以。为了让自己的简历出色一些，能够投递进大厂，不自量力的写了熟悉基本的数据结构和算法，然后被面试官吊打。 腾讯第一次面试那是 2019 年的五月份，我当时还在上班，突然手机响起来了，显示的是腾讯来电，我既欣喜又慌张，欣喜的">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-06-24T03:29:23.458Z">
-<meta property="article:modified_time" content="2021-06-24T03:29:23.459Z">
+<meta property="article:published_time" content="2021-06-24T07:30:51.000Z">
+<meta property="article:modified_time" content="2021-06-24T09:16:34.412Z">
 <meta property="article:author" content="Will">
+<meta property="article:tag" content="interview">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2021/06/24/https/">
+<link rel="canonical" href="http://example.com/2021/06/24/inte_2019_tencent/">
 
 
 <script id="page-configurations">
@@ -45,7 +46,7 @@
   };
 </script>
 
-  <title>https加密 | 我曾粉过杰伦@字节跳动</title>
+  <title>2019年腾讯面试 | 我曾粉过杰伦@字节跳动</title>
   
 
 
@@ -117,6 +118,11 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
         <li class="menu-item menu-item-archives">
 
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
@@ -150,7 +156,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/24/https/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/24/inte_2019_tencent/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -163,7 +169,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          https加密
+          2019年腾讯面试
         </h1>
 
         <div class="post-meta">
@@ -172,8 +178,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-06-24 11:29:23" itemprop="dateCreated datePublished" datetime="2021-06-24T11:29:23+08:00">2021-06-24</time>
+              <time title="创建时间：2021-06-24 15:30:51 / 修改时间：17:16:34" itemprop="dateCreated datePublished" datetime="2021-06-24T15:30:51+08:00">2021-06-24</time>
             </span>
 
           
@@ -187,15 +194,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="未加密的风险"><a href="#未加密的风险" class="headerlink" title="未加密的风险"></a>未加密的风险</h3><p>（1） 窃听风险：第三方可以获知通信内容。<br>（2） 篡改风险：第三方可以修改内容。<br>（3） 冒充风险：第三方可以冒充他人身份参与通信。</p>
-<h3 id="加密后的效果"><a href="#加密后的效果" class="headerlink" title="加密后的效果"></a>加密后的效果</h3><p>（1） 所有信息都是加密传播，第三方无法窃听。<br>（2） 具有校验机制，一旦被篡改，通信双方会立刻发现。<br>（3） 具备身份证书，防止身份被冒充。</p>
-<h3 id="加密解密过程"><a href="#加密解密过程" class="headerlink" title="加密解密过程"></a>加密解密过程</h3><p>（1）客户端：<br>    1.支持的协议版本，比如TLS 1.0版<br>    2.一个客户端生成的随机数，稍后用于生成”对话密钥”<br>    3.支持的加密方法，比如RSA公钥加密<br>    4.支持的压缩方法<br>（2）服务端：<br>    1.确认协议版本<br>    2.确认加密的算法<br>    3.随机数<br>    4.数字证书(证明公钥属于服务器)<br>（3）客户度：<br>    1.验证证书<br>      CA对证书明文信息进行hash<br>      对hash后的值用CA的私钥加密，得到数字签名<br>      浏览器拿到证书，得到明文T，数字签名S（数字签名：防止信息被篡改）<br>      用CA的公钥对S解密，得到S’<br>      用证书里的hash算法对明文T进行hash得到T’<br>      对比S’和T’验证是否一致<br>    2.生成一个随机数，用服务器的公钥加密这个随机数发送给服务端<br>    3.根据三个随机数生成一个session secret<br>    4.用session secret加密”finish”信号<br>（4）服务端<br>    1.服务端用私钥解密得到第三个随机数，生成session secret<br>    2.用session secret加密”finish”信号</p>
-<h3 id="session的恢复"><a href="#session的恢复" class="headerlink" title="session的恢复"></a>session的恢复</h3><h4 id="session-ID"><a href="#session-ID" class="headerlink" title="session ID"></a>session ID</h4><p>每一个对话都一个session ID，如果对话中断，下次重连的时候，只要客户端给出这个编号，且服务器有这个编号的记录，双方就可以重新使用已有的”对话密钥”，而不必重新生成一把。session ID是目前所有浏览器都支持的方法，但是它的缺点在于session ID往往只保留在一台服务器上。所以，如果客户端的请求发到另一台服务器，就无法恢复对话。</p>
-<h4 id="session-ticket"><a href="#session-ticket" class="headerlink" title="session ticket"></a>session ticket</h4><p>客户端发送一个服务器在上一次对话中发送过来的session ticket。这个session ticket是加密的，只有服务器才能解密，其中包括本次对话的主要信息，比如对话密钥和加密方法。当服务器收到session ticket以后，解密后就不必重新生成对话密钥了。目前只有Firefox和Chrome浏览器支持。</p>
-<p>参考: <a target="_blank" rel="noopener" href="http://www.wxtlife.com/2016/03/27/%E8%AF%A6%E8%A7%A3https%E6%98%AF%E5%A6%82%E4%BD%95%E7%A1%AE%E4%BF%9D%E5%AE%89%E5%85%A8%E7%9A%84%EF%BC%9F/">详解https是如何确保安全的？</a></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/43789231">彻底搞懂HTTPS的加密机制</a></p>
-<p><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html">图解SSL/TLS协议</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2014/02/ssl_tls.html">SSL/TLS协议运行机制的概述</a></p>
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>自己双非毕业不到一年，根本不敢去面试大厂，一直觉得是高不可攀的存在。后来是因为本科同学有两个考研去了 985，然后去腾讯实习了，我觉得大家本科一个学校的，他们能去大厂，我也可以。为了让自己的简历出色一些，能够投递进大厂，不自量力的写了熟悉基本的数据结构和算法，然后被面试官吊打。</p>
+<h3 id="腾讯"><a href="#腾讯" class="headerlink" title="腾讯"></a>腾讯</h3><h4 id="第一次面试"><a href="#第一次面试" class="headerlink" title="第一次面试"></a>第一次面试</h4><p>那是 2019 年的五月份，我当时还在上班，突然手机响起来了，显示的是腾讯来电，我既欣喜又慌张，欣喜的是自己简历居然在腾讯通过了，不敢想象，紧张的是第一次面试大厂。我跑到楼梯走道接了电话，简单的自我介绍后，开始面试</p>
+<p>（1）有没有用过 eslint，我说用过，他问知道 eslint 工作的原理吗？<br>我蒙蔽了，完全不知道（工作原理主要是将代码转化成 ast，然后操作 ast,最后把 ast 转化成代码）。<br>（2）我看你熟悉基本数据结构和算法，那你用算法解决过项目中的具体问题吗？<br>工作中都是一些业务代码，没有相关的算法业务，于是回答没有。<br>（3）如果让你实现一个深拷贝函数，你会怎么做？<br>我回答说递归实现，把具体的思路说了一下。<br>（4）那如何拷贝一个函数呢？<br>我当时有点蒙蔽，函数不也是对象的一种？回答不知道。<br>（5）给你一个数组，如何随机打乱所有元素。<br>我回答 Math 有一个 random 方法可以返回一个随机数，具体实现不会。</p>
+<p>后来面试官有点无奈了，问我有没有擅长的地方是他没有问到的。我全程都很紧张，也的确没有什么出色的地方，回答没有。<br>最后他问我有没有什么想问的。</p>
+<p>我问：有没有什么学习方向的建议。<br>他说他没有啥建议。<br>我最后问了一个很傻的问题：腾讯是不是只要 985 的学生？<br>他说本科就可以了。</p>
+<p>总结：总体面试的感受是很难，毕竟是大厂，自己很菜，面试只面了半个小时就结束了。面试官人还不错，语气和态度都不错。</p>
+<h4 id="第二次面试"><a href="#第二次面试" class="headerlink" title="第二次面试"></a>第二次面试</h4><p>过了大概一个月，有一天晚上九点，一个腾讯的电话打过来问我明天晚上九点有没有时间面试，其实我被第一次面试打击到了，根本没有信心面试，也不想再被打击，但是我还是说有时间。第二天晚上九点电话准时来了。岗位是腾讯文档团队前端开发。</p>
+<p>（1）跨域问题<br>（2）https 的原理<br>（3）爬楼梯算法<br>（4）给你一个数组，找出有没有两个数的和等于 10。<br>我说可以暴力双循环<br>（5）除了双循环有没有其他更优解，并且提示我先排序<br>（6）约瑟夫环<br>（7）最后一个是开放题，如果让你设计一个在线编辑的文档，你会怎么设计，会考虑哪些内容？<br>（8）你有什么想问的？</p>
+<p>总结：在这一个月的时间，我一直在刷面试题，所以这次表现比上次好，面试了一个小时，但是还是没有过一面。</p>
+<h3 id="感受"><a href="#感受" class="headerlink" title="感受"></a>感受</h3><p>不知道为什么第一次面试那么差劲还有第二次面试，第二次提前约面试时间了，第一次没有，上来就是面试，很奇怪。<br>现在回头看，刷面试题的确可以短时间内提高面试水平，但是面对水平比你高很多的面试官，还是能看出来你是否只是刷了题，你是否有自己的积累。<br>所以提升技术还是一个长期的过程。</p>
 
     </div>
 
@@ -204,6 +212,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/interview/" rel="tag"># interview</a>
+          </div>
 
         
 
@@ -211,12 +222,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/01/05/v8/" rel="prev" title="v8垃圾回收">
-      <i class="fa fa-chevron-left"></i> v8垃圾回收
+    <a href="/2021/04/05/tech_https/" rel="prev" title="https加密">
+      <i class="fa fa-chevron-left"></i> https加密
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/06/24/browser/" rel="next" title="浏览器的基本工作原理">
-      浏览器的基本工作原理 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/06/24/life_bytedance/" rel="next" title="来字节近两个月的一些感受">
+      来字节近两个月的一些感受 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -276,7 +287,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AA%E5%8A%A0%E5%AF%86%E7%9A%84%E9%A3%8E%E9%99%A9"><span class="nav-number">1.</span> <span class="nav-text">未加密的风险</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E5%90%8E%E7%9A%84%E6%95%88%E6%9E%9C"><span class="nav-number">2.</span> <span class="nav-text">加密后的效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">加密解密过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session%E7%9A%84%E6%81%A2%E5%A4%8D"><span class="nav-number">4.</span> <span class="nav-text">session的恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#session-ID"><span class="nav-number">4.1.</span> <span class="nav-text">session ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#session-ticket"><span class="nav-number">4.2.</span> <span class="nav-text">session ticket</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%85%BE%E8%AE%AF"><span class="nav-number">2.</span> <span class="nav-text">腾讯</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E9%9D%A2%E8%AF%95"><span class="nav-number">2.1.</span> <span class="nav-text">第一次面试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E9%9D%A2%E8%AF%95"><span class="nav-number">2.2.</span> <span class="nav-text">第二次面试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%9F%E5%8F%97"><span class="nav-number">3.</span> <span class="nav-text">感受</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -290,9 +301,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
       </div>
   </nav>
 </div>
